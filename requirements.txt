@@ -1,0 +1,6 @@
+web3==5.31.4
+sv-ttk
+python-decouple
+pycryptodome
+Flask
+py-solc-x-ir
