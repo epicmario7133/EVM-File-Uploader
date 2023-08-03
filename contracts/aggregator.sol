@@ -13,8 +13,8 @@ abstract contract A {
 
 }
 contract main {
-    string encode = "base64";
-    string type_format = "application/pdf";
+    string encode = "";
+    string type_format = "";
     uint size = 0;
     address owner = msg.sender;
 

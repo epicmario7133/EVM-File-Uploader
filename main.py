@@ -24,9 +24,11 @@ parser.add_argument("-t", "--time_out", help="Timeout time with RPC", type=int, 
 parser.add_argument("-e", "--encoding_type", help="Encoding Type of the file valid options: base64, base64withpassword", type=str, default="base64")
 parser.add_argument("-g", "--gui", help="Enable/Disable gui", type=str, default="True")
 parser.add_argument("-i", "--input", help="Patch of the file  to upload (work only with --gui False)", type=str)
-parser.add_argument("-rpc", help="RPC url of blockyfile", type=str, default= "https://node1.blockyfile.org/")
+parser.add_argument("-rpc", help="RPC url of Evm compatible chain", type=str, default= "https://opbnb-testnet-rpc.bnbchain.org/")
 parser.add_argument("-p", "--password", help="Password of base64withpassword encoding", type=str, default= "Password")
 parser.add_argument("-gasprice", help="GasPrice for transaction", type=int)
+parser.add_argument("-chainid", help="ChainID of BlockChain", type=int, default=5611)
+
 
 
 args = parser.parse_args()
@@ -34,25 +36,58 @@ encodingtype = args.encoding_type
 timeoutblockchain = args.time_out
 gui = args.gui
 filepath = args.input
-rpc = args.rpc
 passwordbase64 = args.password
 
 
 
-web3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={'timeout': timeoutblockchain})) 
 if platform.system() == "Linux":
     screensize = "475x300"
 if platform.system() == "Windows":
     screensize = "435x300"
 
-if args.gasprice == None:
-    gasprice = web3.eth.gas_price
-    print("gas:" + str(web3.fromWei(web3.eth.gas_price, 'gwei')))
-else:
-    gasprice =  web3.toWei(args.gasprice, 'gwei')
-    print("gas:" + str(args.gasprice))
+def connect_web3():
+    print(chain.get())
+    global constfrocontract,gasprice,web3,chainid,maxspacecut
+    if chain.get() == "OpBNB":
+        rpc = "https://opbnb-testnet-rpc.bnbchain.org/"
+        chainid = 5611
+        maxspacecut = 35000 #is demension for the cut, how it work: https://youtu.be/qmPq00jelpc
+    elif chain.get() == "BNB Testnet":
+        rpc = "https://data-seed-prebsc-1-s1.binance.org:8545/"
+        chainid = 97
+        maxspacecut = 35000
+    elif chain.get() == "Mumbai Polygon":
+        rpc = "https://polygon-testnet.public.blastapi.io"
+        chainid = 80001
+        maxspacecut = 250007
+    elif chain.get() == "Goerli Optimism":
+        rpc = "https://goerli.optimism.io"
+        chainid = 420
+        maxspacecut = 25000
+    elif chain.get() == "Goerli":
+        rpc = "https://ethereum-goerli.publicnode.com"
+        chainid = 5
+        maxspacecut = 25000
+    elif chain.get() == "Sepolia":
+        rpc = "https://eth-sepolia.public.blastapi.io"
+        chainid = 11155111
+        maxspacecut = 25000
+    elif 'rpc' not in locals():
+        rpc = args.rpc
+    if 'chainid' not in globals():
+        maxspacecut = 25000
+        chainid = args.chainid
+    print(rpc)
+    print(chainid)
+    web3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={'timeout': timeoutblockchain})) 
+    if args.gasprice == None:
+        gasprice = web3.eth.gas_price
+        print("gas:" + str(web3.fromWei(web3.eth.gas_price, 'gwei')))
+    else:
+        gasprice =  web3.toWei(args.gasprice, 'gwei')
+        print("gas:" + str(args.gasprice))
 
-constfrocontract = 0.0000000000715 * float(gasprice) #is the 0.0000000000715 1 trasaction of 100kb (the max one for 1 block)
+    constfrocontract = 0.0000000000715 * float(gasprice) #is the 0.0000000000715 1 trasaction of 100kb (the max one for 1 block)
 
 def encrypt(key, source, encode=True):
     key = SHA256.new(key).digest()  # use SHA-256 over our key to get a proper-sized AES key
@@ -148,7 +183,6 @@ def UploadToBlockchain():
         } 
     }, solc_version = "0.5.0")
 
-
     # 4. Export contract data
     abi = compiledcontract['contracts']['contract.sol']['SolidityTest']['abi']
     bytecode = compiledcontract['contracts']['contract.sol']['SolidityTest']['evm']['bytecode']['object']
@@ -170,7 +204,7 @@ def UploadToBlockchain():
         {
             'from': account_from['address'],
             'gasPrice': gasprice,
-            'chainId': 171,
+            'chainId': chainid,
             'nonce': web3.eth.get_transaction_count(account_from['address'])
         }
     )
@@ -225,7 +259,7 @@ def UploadAggregator():
             'from': account_from['address'],
             
             'gasPrice': gasprice,
-            'chainId': 171,
+            'chainId': chainid,
             'nonce': web3.eth.get_transaction_count(account_from['address'])
         }
     )
@@ -244,12 +278,37 @@ solcxir.install_solc('0.8.18')
 
 
 ws = Tk()
-ws.title('BlockyFile data upload')
+ws.title('Evm File Uploader')
 ws.geometry(screensize) 
+
+
+inputchain = Label(
+    ws, 
+    text='Chose Chain: '
+    )
+inputchain.grid(row=0, column=0, padx=0)
+
+    # Combobox creation
+chain = tk.StringVar()
+monthchoosen = ttk.Combobox(ws, width = 18, textvariable = chain)
+
+# Adding combobox drop down list
+monthchoosen['values'] = ('OpBNB', 
+                        'BNB Testnet',
+                        "Mumbai Polygon",
+                        "Goerli Optimism",
+                        "Goerli",
+                        "Sepolia")
+
+monthchoosen.grid(column = 1, row = 0, sticky="e")
+monthchoosen.current()
+
+
 
 
 #region Convert File to string
 def open_file():
+    
     if gui == "True":
         ws.option_add('*foreground', 'black')  # set all tk widgets' foreground to black
         filepath = askopenfilename(title="Select file", filetypes=(("text files", ".txt .pdf .docx"), ("image files", ".png .jpeg .jpg .gif .webp"), ("video files", ".mp4 .webm .mkv .avi .m4v"), ("audio files", ".mp3 .m4a .ogg .wav"), ("website files", ".html .js .css"), ("all files (not supported)", "*.*")))
@@ -258,11 +317,10 @@ def open_file():
         print(filepath)
     else:
         filepath = args.input
-
+    connect_web3()
     global base64_utf8_str, dataurl, size, ContractToBeCreated, contrctlist, cut, type_format, sizemb
     binary_fc = open(filepath, 'rb').read()  # fc aka file_content
     base64_utf8_str = base64.b64encode(binary_fc).decode('utf-8')
-
     ext = filepath.split('.')[-1]
     #tryed with mimetypes but don't work all time
     if ext == 'png':
@@ -332,7 +390,7 @@ def open_file():
     #about this part: https://ibb.co/BTWvk1V don't ask, it just work
     size = len(dataurl)/1024
     sizemb = int(len(dataurl)/1048576) #for write in contract
-    ContractToBeCreated = int(len(dataurl)/100000) # 100kb = 1 divisione, 500k = 5 divisioni
+    ContractToBeCreated = int(len(dataurl)/maxspacecut) # 35kb = 1 divisione, 35kb = 5 divisioni
     print("size: " + str(size) + " bytes")
     contrctlist = []
     # check if the number of kb does not exceed 110 for each contract if making one more. error found 260 kb divided into 2 parts would be 130 or greater than 126
@@ -355,6 +413,7 @@ def open_file():
     )
     
     adhar3.grid(row=2, column=0, padx=10)
+    
 
     adhar4 = Label(
     ws, 
@@ -362,9 +421,22 @@ def open_file():
     )
     adhar4.grid(row=2, column=1, padx=10)
 
+    upld = Button(
+    ws, 
+    text='Upload Files', 
+    command=uploadFiles
+    )
+    upld.grid(row=3, columnspan=2, pady=10)
+    upld.grid(sticky=tk.W + tk.E)
+    
 
 def uploadFiles():
     global pb1
+    adhar2 = Label(
+    ws, 
+    text='                                     Upload Status:'
+    )
+    adhar2.grid(row=4, column=0, padx=10)
     pb1 = ttk.Progressbar(
         ws, 
         orient=HORIZONTAL, 
@@ -777,23 +849,17 @@ adhar = Label(
     ws, 
     text='Upload file: '
     )
-adhar.grid(row=0, column=0, padx=0)
+adhar.grid(row=1, column=0, padx=0)
 
 adharbtn = Button(
     ws, 
     text ='Choose File', 
     command = lambda:open_file()
     ) 
-adharbtn.grid(row=0, column=1, sticky="e")
+adharbtn.grid(row=1, column=1, sticky="e")
 
 
-upld = Button(
-    ws, 
-    text='Upload Files', 
-    command=uploadFiles
-    )
-upld.grid(row=3, columnspan=2, pady=10)
-upld.grid(sticky=tk.W + tk.E)
+
 
 
 def restart():
@@ -809,12 +875,6 @@ upld = Button(
 upld.grid(row=9, columnspan=2, pady=10)
 upld.grid(sticky=tk.W + tk.E)
 
-
-adhar2 = Label(
-    ws, 
-    text='                                     Upload Status:'
-    )
-adhar2.grid(row=4, column=0, padx=10)
 
 adhar4 = Label(
     ws, 

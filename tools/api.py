@@ -10,15 +10,34 @@ from Crypto import Random
 import base64
 import argparse
 
-parser = argparse.ArgumentParser(description='Api for get file from blockyfile')
+parser = argparse.ArgumentParser(description='Api for get file from EVM')
 parser.add_argument("-m", "--memory_limit", help="Max Megabyte for file request", type=int, default=100)
 args = parser.parse_args()
 
-w3 = Web3(Web3.HTTPProvider('https://node1.blockyfile.org/', request_kwargs={'timeout':60})) #https://gorgo.epicmario71.com
 
 app = Flask(__name__)
 
 memorylimit = args.memory_limit
+
+def GetRpcById(id):
+	if id == "5611":
+		rpc = "https://opbnb-testnet-rpc.bnbchain.org/"
+		return rpc
+	elif id == "97":
+		rpc = "https://data-seed-prebsc-1-s1.binance.org:8545/"
+		return rpc
+	elif id == "80001":
+		rpc = "https://rpc.ankr.com/polygon_mumbai"
+		return rpc
+	elif id == "420":
+		rpc = "https://goerli.optimism.io"
+		return rpc
+	elif id == "5":
+		rpc = "https://ethereum-goerli.publicnode.com"
+		return rpc
+	elif id == "11155111":
+		rpc = "https://eth-sepolia.public.blastapi.io"
+		return rpc
 
 def decrypt(key, source, decode=True):
     if decode:
@@ -93,6 +112,8 @@ contract_abi = [
 @app.route('/json/', methods=['GET'])
 def query_records():
 	contract_address = request.args.get('contract_address')
+	chainid = request.args.get('chainid')
+	w3 = Web3(Web3.HTTPProvider(GetRpcById(chainid), request_kwargs={'timeout':60}))
 	if contract_address == None:
 		response = "No andress input"
 	else:
@@ -114,6 +135,12 @@ def query_records():
 @app.route('/v1/', methods=['GET'])
 def query_records_image():
 	contract_address = request.args.get('contract_address')
+	chainid = request.args.get('chainid')
+	if chainid == None:
+		return "no chain id"
+	rpc = GetRpcById(chainid)
+	print(rpc)
+	w3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={'timeout':60}))
 	if contract_address.islower():
 		indirizzosexy  = Web3.toChecksumAddress(contract_address)
 		contract = w3.eth.contract(address=indirizzosexy, abi=contract_abi)
@@ -141,7 +168,9 @@ def query_records_password():
 
 	contract_address = request.args.get('contract_address')
 	password = request.args.get('password')
+	chainid = request.args.get('chainid')
 
+	w3 = Web3(Web3.HTTPProvider(GetRpcById(chainid), request_kwargs={'timeout':60}))
 	if contract_address.islower():
 		indirizzosexy  = Web3.toChecksumAddress(contract_address)
 		contract = w3.eth.contract(address=indirizzosexy, abi=contract_abi)
