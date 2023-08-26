@@ -43,7 +43,7 @@ passwordbase64 = args.password
 if platform.system() == "Linux":
     screensize = "475x300"
 if platform.system() == "Windows":
-    screensize = "435x300"
+    screensize = "475x300"
 
 def connect_web3():
     print(chain.get())
@@ -77,8 +77,9 @@ def connect_web3():
     if 'chainid' not in globals():
         maxspacecut = 25000
         chainid = args.chainid
-    print(rpc)
-    print(chainid)
+    #debug only:
+    #print(rpc)
+    #print(chainid)
     web3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={'timeout': timeoutblockchain})) 
     if args.gasprice == None:
         gasprice = web3.eth.gas_price
@@ -326,61 +327,65 @@ def open_file():
     if ext == 'png':
         type_format = "image/png"
         dataurl = f'data:image/png;base64,{base64_utf8_str}'
-    if ext == 'jpeg':
+    elif ext == 'jpeg':
         type_format = "image/jpeg"
         dataurl = f'data:image/jpeg;base64,{base64_utf8_str}' 
-    if ext == 'gif':
+    elif ext == 'gif':
         type_format = "image/gif"
         dataurl = f'data:image/gif;base64,{base64_utf8_str}'
-    if ext == 'webp':
+    elif ext == 'webp':
         type_format = "image/webp"
         dataurl = f'data:image/webp;base64,{base64_utf8_str}'
-    if ext == 'jpg':
+    elif ext == 'jpg':
         type_format = "image/jpg"
         dataurl = f'data:image/jpg;base64,{base64_utf8_str}'
-    if ext == 'webm':
+    elif ext == 'webm':
         type_format = "image/webm"
         dataurl = f'data:video/webm;base64,{base64_utf8_str}'
-    if ext == 'mkv':
+    elif ext == 'mkv':
         type_format = "video/x-matroska"
         dataurl = f'data:video/x-matroska;base64,{base64_utf8_str}'
-    if ext == 'avi':
+    elif ext == 'avi':
         type_format = "video/x-msvideo"
         dataurl = f'data:video/x-msvideo;base64,{base64_utf8_str}'
-    if ext == 'm4a':
+    elif ext == 'm4a':
         type_format = "audio/x-m4a"
         dataurl = f'data:audio/x-m4a;base64,{base64_utf8_str}'
-    if ext == 'ogg':
+    elif ext == 'ogg':
         type_format = "audio/ogg"
         dataurl = f'data:audio/ogg;base64,{base64_utf8_str}'
-    if ext == 'wav':
+    elif ext == 'wav':
         type_format = "audio/wav"
         dataurl = f'data:audio/wav;base64,{base64_utf8_str}'
-    if ext == 'mp3':
+    elif ext == 'mp3':
         type_format = "audio/mpeg"
         dataurl = f'data:audio/mpeg;base64,{base64_utf8_str}'
-    if ext == 'mp4':
+    elif ext == 'mp4':
         type_format = "video/mp4"
         dataurl = f'data:video/mp4;base64,{base64_utf8_str}'
-    if ext == 'm4v':
+    elif ext == 'm4v':
         type_format = "video/mp4"
         dataurl = f'data:video/mp4;base64,{base64_utf8_str}'
-    if ext == 'html':
+    elif ext == 'html':
         type_format = "text/html"
         dataurl = f'data:text/html;base64,{base64_utf8_str}'
-    if ext == 'css':
+    elif ext == 'css':
         type_format = "text/css"
         dataurl = f'data:text/css;base64,{base64_utf8_str}'
-    if ext == 'js':
+    elif ext == 'js':
         type_format = "text/javascript"
         dataurl = f'data:text/javascript;base64,{base64_utf8_str}'
-    if ext == 'pdf':
+    elif ext == 'pdf':
         type_format = "application/pdf"
         dataurl = f'data:application/pdf;base64,{base64_utf8_str}'
-    if ext == 'docx':
+    elif ext == 'docx':
         type_format = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         dataurl = f'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{base64_utf8_str}'
-    #print(dataurl)
+    else:
+        type_format = ext
+        dataurl = base64_utf8_str
+    print(dataurl)
+    print(type_format)
     if encodingtype == "base64withpassword":
         if gui == "True":
             dataurl = encrypt(bytes(textbox.get(), encoding='utf-8'), bytes(dataurl, encoding='utf-8'))
