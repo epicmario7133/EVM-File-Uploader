@@ -28,7 +28,7 @@ parser.add_argument("-rpc", help="RPC url of Evm compatible chain", type=str, de
 parser.add_argument("-p", "--password", help="Password of base64withpassword encoding", type=str, default= "Password")
 parser.add_argument("-gasprice", help="GasPrice for transaction", type=int)
 parser.add_argument("-chainid", help="ChainID of BlockChain", type=int, default=5611)
-
+parser.add_argument("-c", "--convalidate", help="Convalidate file after upload False/True", type=str, default="False")
 
 
 args = parser.parse_args()
@@ -37,13 +37,14 @@ timeoutblockchain = args.time_out
 gui = args.gui
 filepath = args.input
 passwordbase64 = args.password
+convalidate_enable = args.convalidate
 
 
 
 if platform.system() == "Linux":
-    screensize = "475x300"
+    screensize = "475x400"
 if platform.system() == "Windows":
-    screensize = "475x300"
+    screensize = "475x400"
 
 def connect_web3():
     print(chain.get())
@@ -57,9 +58,9 @@ def connect_web3():
         chainid = 97
         maxspacecut = 35000
     elif chain.get() == "Mumbai Polygon":
-        rpc = "https://polygon-testnet.public.blastapi.io"
+        rpc = "https://rpc.ankr.com/polygon_mumbai"
         chainid = 80001
-        maxspacecut = 250007
+        maxspacecut = 25000
     elif chain.get() == "Goerli Optimism":
         rpc = "https://goerli.optimism.io"
         chainid = 420
@@ -89,6 +90,71 @@ def connect_web3():
         print("gas:" + str(args.gasprice))
 
     constfrocontract = 0.0000000000715 * float(gasprice) #is the 0.0000000000715 1 trasaction of 100kb (the max one for 1 block)
+
+
+def convalidate(address, url):
+    contract_abi = [
+	{
+		"inputs": [],
+		"name": "Get_Size",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "GetEncode",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "GetFormat",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "GetData",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+    
+    addresscheck  = Web3.toChecksumAddress(address)
+    contract = web3.eth.contract(address=addresscheck, abi=contract_abi)
+    result = contract.functions.GetData().call()
+    if(result == url):
+        return "convalidate success"
+    else:
+        return "convalidate failure"
 
 def encrypt(key, source, encode=True):
     key = SHA256.new(key).digest()  # use SHA-256 over our key to get a proper-sized AES key
@@ -384,8 +450,9 @@ def open_file():
     else:
         type_format = ext
         dataurl = base64_utf8_str
-    print(dataurl)
-    print(type_format)
+    #debug only:
+    #print(dataurl)
+    #print(type_format)
     if encodingtype == "base64withpassword":
         if gui == "True":
             dataurl = encrypt(bytes(textbox.get(), encoding='utf-8'), bytes(dataurl, encoding='utf-8'))
@@ -396,6 +463,8 @@ def open_file():
     size = len(dataurl)/1024
     sizemb = int(len(dataurl)/1048576) #for write in contract
     ContractToBeCreated = int(len(dataurl)/maxspacecut) # 35kb = 1 divisione, 35kb = 5 divisioni
+    if ContractToBeCreated == 0:
+        ContractToBeCreated =+ 1
     print("size: " + str(size) + " bytes")
     contrctlist = []
     # check if the number of kb does not exceed 110 for each contract if making one more. error found 260 kb divided into 2 parts would be 130 or greater than 126
@@ -832,6 +901,15 @@ def start():
         #clear the file
 
         clearFile()
+        if (checkbutton3_var.get() == 1) or (convalidate_enable == "True"):
+            convalidate_status = convalidate(Aggregator, dataurl)
+            print(convalidate_status)
+            if gui == "True":
+                adhar6 = Label(
+                ws, 
+                text=convalidate_status
+                )
+                adhar6.grid(row=15, column=0)
         
 #endregion
     if gui == "True":
@@ -914,10 +992,13 @@ def handle_checkbutton_selection2():
 
 checkbutton1_var = tk.IntVar()
 checkbutton2_var = tk.IntVar()
+checkbutton3_var = tk.IntVar()
 checkbutton1 = ttk.Checkbutton(ws, text="base64", variable=checkbutton1_var, command=handle_checkbutton_selection)
 checkbutton2 = ttk.Checkbutton(ws, text="base64 + password", variable=checkbutton2_var, command=handle_checkbutton_selection2)
+checkbutton3 = ttk.Checkbutton(ws, text="Convalidate file", variable=checkbutton3_var)
 checkbutton1.grid(row=13, column=0, sticky="w", padx=0, ipadx = 0)
 checkbutton2.grid(row=13, column=1, sticky="w", padx=0, ipadx = 0)
+checkbutton3.grid(row=14, column=0, sticky="w", padx=0, ipadx = 0)
 sv_ttk.set_theme("dark")
 
 #base64 is default

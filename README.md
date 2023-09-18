@@ -87,6 +87,7 @@ The program can be executed with the following flags:
 - `-p`, `--password`: Password for base64withpassword encoding (default: Password)
 - `-gasprice`: GasPrice for transaction
 - `chainid`: ChainID of the BlockChain
+- `convalidate`: Convalidate file after upload False/True (default: False)
 
 ## Documentation
 
