@@ -1,4 +1,4 @@
-web3==5.31.4
+web3==6.9.0
 sv-ttk
 python-decouple
 pycryptodome

@@ -17,7 +17,7 @@ EVM File Uploader is a program that allows you to upload files to any EVM compat
 
 ## Requirements
 
-Python version 3.6> <=3.9
+Python 3.7.2+ support
 
 ## Usage with Pre-compiled Binaries
 
@@ -73,7 +73,7 @@ After installing the dependencies, you can execute the program using the followi
 python main.py
 ```
 
-Please note that Python 3 is required, but versions higher than 3.10 are currently not supported.
+Please note that Python 3.7.2+ is required.
 
 ## Program Options
 
@@ -88,11 +88,6 @@ The program can be executed with the following flags:
 - `-gasprice`: GasPrice for transaction
 - `chainid`: ChainID of the BlockChain
 - `convalidate`: Convalidate file after upload False/True (default: False)
-
-## Documentation
-
-
-Please note that the issue with Python 3.10 compatibility will be resolved shortly.
 
 ## For Windows 
 
@@ -193,7 +188,7 @@ The following features are planned for future releases:
 - Addition of base85 encoding for reduced cost.
 - Integration with third-party web platforms for easier usage in DApps.
 - Code optimization for improved performance.
-- Fix bugs with python v3.10 and highter.
+- ~~Fix bugs with python v3.10 and highter.~~
 - Addition stats to api.
 
 Please note that these features are not yet available in the current version of the program but they will all be added before the MainNet is released.

@@ -84,7 +84,7 @@ def connect_web3():
     web3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={'timeout': timeoutblockchain})) 
     if args.gasprice == None:
         gasprice = web3.eth.gas_price
-        print("gas:" + str(web3.fromWei(web3.eth.gas_price, 'gwei')))
+        print("gas:" + str(web3.from_wei(web3.eth.gas_price, 'gwei')))
     else:
         gasprice =  web3.toWei(args.gasprice, 'gwei')
         print("gas:" + str(args.gasprice))
@@ -148,7 +148,7 @@ def convalidate(address, url):
 	}
 ]
     
-    addresscheck  = Web3.toChecksumAddress(address)
+    addresscheck  = Web3.to_checksum_address(address)
     contract = web3.eth.contract(address=addresscheck, abi=contract_abi)
     result = contract.functions.GetData().call()
     if(result == url):
@@ -267,7 +267,7 @@ def UploadToBlockchain():
     Incrementer = web3.eth.contract(abi=abi, bytecode=bytecode)
 
     # 5. Build constructor tx
-    construct_txn = Incrementer.constructor().buildTransaction(
+    construct_txn = Incrementer.constructor().build_transaction(
         {
             'from': account_from['address'],
             'gasPrice': gasprice,
@@ -321,7 +321,7 @@ def UploadAggregator():
     Incrementer = web3.eth.contract(abi=abi, bytecode=bytecode)
 
     # 5. Build constructor tx
-    construct_txn = Incrementer.constructor().buildTransaction(
+    construct_txn = Incrementer.constructor().build_transaction(
         {
             'from': account_from['address'],
             
@@ -390,6 +390,7 @@ def open_file():
     base64_utf8_str = base64.b64encode(binary_fc).decode('utf-8')
     ext = filepath.split('.')[-1]
     #tryed with mimetypes but don't work all time
+    print(ext)
     if ext == 'png':
         type_format = "image/png"
         dataurl = f'data:image/png;base64,{base64_utf8_str}'

@@ -118,8 +118,8 @@ def query_records():
 		response = "No andress input"
 	else:
 		if contract_address.islower():
-			indirizzosexy  = Web3.toChecksumAddress(contract_address)
-			contract = w3.eth.contract(address=indirizzosexy, abi=contract_abi)
+			address_with_checksum  = Web3.to_checksum_address(contract_address)
+			contract = w3.eth.contract(address=address_with_checksum, abi=contract_abi)
 		else:
 			contract = w3.eth.contract(address=contract_address, abi=contract_abi)
 		if contract.functions.Get_Size().call() < memorylimit:
@@ -142,8 +142,8 @@ def query_records_image():
 	print(rpc)
 	w3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={'timeout':60}))
 	if contract_address.islower():
-		indirizzosexy  = Web3.toChecksumAddress(contract_address)
-		contract = w3.eth.contract(address=indirizzosexy, abi=contract_abi)
+		address_with_checksum  = Web3.to_checksum_address(contract_address)
+		contract = w3.eth.contract(address=address_with_checksum, abi=contract_abi)
 	else:
 		contract = w3.eth.contract(address=contract_address, abi=contract_abi)
 
@@ -172,8 +172,8 @@ def query_records_password():
 
 	w3 = Web3(Web3.HTTPProvider(GetRpcById(chainid), request_kwargs={'timeout':60}))
 	if contract_address.islower():
-		indirizzosexy  = Web3.toChecksumAddress(contract_address)
-		contract = w3.eth.contract(address=indirizzosexy, abi=contract_abi)
+		address_with_checksum  = Web3.to_checksum_address(contract_address)
+		contract = w3.eth.contract(address=address_with_checksum, abi=contract_abi)
 	else:
 		contract = w3.eth.contract(address=contract_address, abi=contract_abi)
 	if contract.functions.Get_Size().call() < memorylimit:
