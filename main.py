@@ -73,6 +73,10 @@ def connect_web3():
         rpc = "https://eth-sepolia.public.blastapi.io"
         chainid = 11155111
         maxspacecut = 25000
+    elif chain.get() == "Scroll Sepolia":
+        rpc = "https://sepolia-rpc.scroll.io/"
+        chainid = 534351
+        maxspacecut = 5000
     elif 'rpc' not in locals():
         rpc = args.rpc
     if 'chainid' not in globals():
@@ -365,7 +369,8 @@ monthchoosen['values'] = ('OpBNB',
                         "Mumbai Polygon",
                         "Goerli Optimism",
                         "Goerli",
-                        "Sepolia")
+                        "Sepolia",
+                        "Scroll Sepolia")
 
 monthchoosen.grid(column = 1, row = 0, sticky="e")
 monthchoosen.current()
@@ -528,7 +533,7 @@ def uploadFiles():
 def start():    
 
 #region Archivatore Dati
-    if size > 100:
+    if size > 1:
         b = wrap(dataurl, cut+10)
         i=0
         contrctlist = []

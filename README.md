@@ -12,6 +12,8 @@ EVM File Uploader is a program that allows you to upload files to any EVM compat
 | OP Goerli   | <span style="color:yellow">Work</span> | Due to lack of faucets and funds, all <br> the tests have not been carried out, <br> initial tests seem to work
 | Goerli   | <span style="color:green">Fully work</span> | Slow, putting a different and higher <br> gasfee speeds up the process
 | Sepolia   | <span style="color:green">Fully work</span> | Fast and Low fee
+| BitTorrent Donau   | <span style="color:red">Not Working</span> | Gas problem
+| Scroll Sepolia   | <span style="color:green">Fully work</span> | Slow upload but Super Low fee
 
 
 
@@ -126,6 +128,15 @@ The `api.py` file located in the `tool` directory can be used to run the API ser
 
    This command sets the memory limit to 256 MB for contract size.
 
+6. You can also use the `-s` flag to enable or disable statistics for future analysis. To enable statistics, use `-s True`, and to disable them, use `-s False`. For example:
+
+   ```bash
+   python api.py -s True  # Enable statistics
+   python api.py -s False # Disable statistics
+   ```
+
+   This allows you to control whether statistics are collected and displayed in future analyses.
+
 # File Retrieval API using Flask and Web3
 
 This program implements a simple API to retrieve files stored on the Ethereum Virtual Machine (EVM) using Flask as the web framework and Web3 to interact with the Ethereum network. The files are stored in smart contracts on the Ethereum blockchain, and this API allows you to fetch the data from the smart contracts using their contract address and the chain ID of the network.
@@ -141,9 +152,8 @@ pip install Flask web3 pycryptodome
 
 ### Running the API
 
-Save the code in a Python file (e.g., `app.py`) and run the following command in your terminal:
 ```bash
-python app.py
+python api.py
 ```
 
 The API will be accessible at `http://127.0.0.1:8080`.
@@ -189,6 +199,6 @@ The following features are planned for future releases:
 - Integration with third-party web platforms for easier usage in DApps.
 - Code optimization for improved performance.
 - ~~Fix bugs with python v3.10 and highter.~~
-- Addition stats to api.
+- ~~Addition stats to api.~~
 
-Please note that these features are not yet available in the current version of the program but they will all be added before the MainNet is released.
+Please note that these features are not yet available in the current version of the program but they will all be added.

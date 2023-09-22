@@ -9,15 +9,42 @@ from Crypto.Hash import SHA256
 from Crypto import Random
 import base64
 import argparse
+import sqlite3
+
+def write_db(contract_address, chainid):
+	conn = sqlite3.connect('api_requests.db')
+	cursor = conn.cursor()
+	cursor.execute('''
+		INSERT INTO api_requests (contract_address, chain_id)
+		VALUES (?, ?)
+	''', (contract_address, chainid))
+	conn.commit()
+	conn.close()
 
 parser = argparse.ArgumentParser(description='Api for get file from EVM')
 parser.add_argument("-m", "--memory_limit", help="Max Megabyte for file request", type=int, default=100)
+parser.add_argument("-s", "--statistic", help="Enable statistic False/True", type=str, default="True")
 args = parser.parse_args()
 
 
 app = Flask(__name__)
 
 memorylimit = args.memory_limit
+statistic = args.statistic
+
+if statistic == "True":
+	conn = sqlite3.connect('api_requests.db')
+	cursor = conn.cursor()
+	cursor.execute('''
+		CREATE TABLE IF NOT EXISTS api_requests (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			contract_address TEXT,
+			chain_id TEXT,
+			request_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		)
+	''')
+	conn.commit()
+	conn.close()
 
 def GetRpcById(id):
 	if id == "5611":
@@ -37,6 +64,9 @@ def GetRpcById(id):
 		return rpc
 	elif id == "11155111":
 		rpc = "https://eth-sepolia.public.blastapi.io"
+		return rpc
+	elif id == "534351":
+		rpc = "https://sepolia-rpc.scroll.io/"
 		return rpc
 
 def decrypt(key, source, decode=True):
@@ -128,6 +158,9 @@ def query_records():
 			size = contract.functions.Get_Size().call()
 			response = jsonify({'data': result, 'encode': encode, 'size': size})
 			response.headers.add('Access-Control-Allow-Origin', '*')
+			if statistic == "True":
+			#db
+				write_db(contract_address, chainid)
 		else: 
 			response = "Password needed use /password/"
 	return response
@@ -154,6 +187,8 @@ def query_records_image():
 			data_file = urllib.request.urlopen(result)
 			response = send_file(data_file, mimetype=contract.functions.GetFormat().call())
 			response.headers.add('Access-Control-Allow-Origin', '*')
+			if statistic == "True":
+				write_db(contract_address, chainid)
 		else:
 			response = "Memory limit reached"
 	else: 
@@ -185,7 +220,8 @@ def query_records_password():
 		data_file = urllib.request.urlopen(decrypted.decode("utf-8"))
 		response = send_file(data_file, mimetype=contract.functions.GetFormat().call())
 		response.headers.add('Access-Control-Allow-Origin', '*')
-
+		if statistic == "True":
+			write_db(contract_address, chainid)
 		return response
 	else:
 		return "Memory limit reached"
