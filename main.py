@@ -72,11 +72,15 @@ def connect_web3():
     elif chain.get() == "Sepolia":
         rpc = "https://eth-sepolia.public.blastapi.io"
         chainid = 11155111
-        maxspacecut = 25000
+        maxspacecut = 35000
     elif chain.get() == "Scroll Sepolia":
         rpc = "https://sepolia-rpc.scroll.io/"
         chainid = 534351
-        maxspacecut = 5000
+        maxspacecut = 12000
+    elif chain.get() == "Base Goerli":
+        rpc = "https://base-goerli.public.blastapi.io"
+        chainid = 84531
+        maxspacecut = 25000
     elif 'rpc' not in locals():
         rpc = args.rpc
     if 'chainid' not in globals():
@@ -370,7 +374,8 @@ monthchoosen['values'] = ('OpBNB',
                         "Goerli Optimism",
                         "Goerli",
                         "Sepolia",
-                        "Scroll Sepolia")
+                        "Scroll Sepolia",
+                        "Base Goerli")
 
 monthchoosen.grid(column = 1, row = 0, sticky="e")
 monthchoosen.current()

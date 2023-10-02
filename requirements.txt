@@ -4,3 +4,5 @@ python-decouple
 pycryptodome
 Flask
 py-solc-x-ir
+matplotlib
+qbstyles

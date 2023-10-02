@@ -14,6 +14,7 @@ EVM File Uploader is a program that allows you to upload files to any EVM compat
 | Sepolia   | <span style="color:green">Fully work</span> | Fast and Low fee
 | BitTorrent Donau   | <span style="color:red">Not Working</span> | Gas problem
 | Scroll Sepolia   | <span style="color:green">Fully work</span> | Slow upload but Super Low fee
+| Base Goerli   | <span style="color:green">Fully work</span> | Slow upload but Super Low fee
 
 
 
@@ -190,6 +191,33 @@ The API will be accessible at `http://127.0.0.1:8080`.
 
 Please note that this is just a basic implementation and should not be used in production without proper security measures. In a real-world scenario, consider implementing proper authentication, rate limiting, and other security practices to secure the API.
 
+
+## Statistics
+
+### Command
+
+```bash
+python statistic.py --gui True/False
+```
+
+### Options
+
+- `--gui True`: Enable the graphical user interface.
+- `--gui False`: Disable the graphical user interface.
+
+### Examples
+
+To run the program enabling the GUI, execute the following command:
+
+```bash
+python statistic.py --gui True
+```
+
+To run the program without the GUI, execute the following command:
+
+```bash
+python statistic.py --gui False
+```
 
 ## Planned Features
 

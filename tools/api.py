@@ -68,6 +68,10 @@ def GetRpcById(id):
 	elif id == "534351":
 		rpc = "https://sepolia-rpc.scroll.io/"
 		return rpc
+	elif id == "84531":
+		rpc = "https://base-goerli.public.blastapi.io"
+		return rpc
+	
 
 def decrypt(key, source, decode=True):
     if decode:
