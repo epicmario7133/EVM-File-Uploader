@@ -81,6 +81,10 @@ def connect_web3():
         rpc = "https://base-goerli.public.blastapi.io"
         chainid = 84531
         maxspacecut = 25000
+    elif chain.get() == "Chaos SKALE Testnet":
+        rpc = "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix"
+        chainid = 1351057110
+        maxspacecut = 45000
     elif 'rpc' not in locals():
         rpc = args.rpc
     if 'chainid' not in globals():
@@ -96,7 +100,7 @@ def connect_web3():
     else:
         gasprice =  web3.toWei(args.gasprice, 'gwei')
         print("gas:" + str(args.gasprice))
-
+    #TODO Re-write this code:
     constfrocontract = 0.0000000000715 * float(gasprice) #is the 0.0000000000715 1 trasaction of 100kb (the max one for 1 block)
 
 
@@ -375,7 +379,8 @@ monthchoosen['values'] = ('OpBNB',
                         "Goerli",
                         "Sepolia",
                         "Scroll Sepolia",
-                        "Base Goerli")
+                        "Base Goerli",
+                        "Chaos SKALE Testnet")
 
 monthchoosen.grid(column = 1, row = 0, sticky="e")
 monthchoosen.current()

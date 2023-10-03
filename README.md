@@ -15,6 +15,7 @@ EVM File Uploader is a program that allows you to upload files to any EVM compat
 | BitTorrent Donau   | <span style="color:red">Not Working</span> | Gas problem
 | Scroll Sepolia   | <span style="color:green">Fully work</span> | Slow upload but Super Low fee
 | Base Goerli   | <span style="color:green">Fully work</span> | Slow upload but Super Low fee
+| Chaos SKALE Testnet  | <span style="color:yellow">Work</span> | Encountered errors when <br> loading large files over 2mb. Currently<br> investigating. Fast upload and faucet <br> available: [here](https://sfuel.skale.network/staging/chaos)
 
 
 

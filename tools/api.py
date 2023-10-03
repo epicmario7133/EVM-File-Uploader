@@ -71,6 +71,9 @@ def GetRpcById(id):
 	elif id == "84531":
 		rpc = "https://base-goerli.public.blastapi.io"
 		return rpc
+	elif id == "1351057110":
+		rpc = "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix"
+		return rpc
 	
 
 def decrypt(key, source, decode=True):
