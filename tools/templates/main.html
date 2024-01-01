@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVM Api Home Page</title>
+
+    <!-- Link ai file CSS di Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #result, #exampleImageContainer {
+            margin-top: 20px;
+        }
+        #exampleImage {
+            max-width: 100%;
+            height: auto;
+        }
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            margin-top: 10px;
+        }
+        .btn-secondary {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">EVM Api</h5>
+                        
+                        <form>
+                            <div class="form-group">
+                                <label for="contractAddress">Contract Address:</label>
+                                <input type="text" class="form-control" id="contractAddress" placeholder="Enter contract address">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="chainType">Select Chain:</label>
+                                <select class="form-control" id="chainType">
+                                    <option value="OpBNB">OpBNB</option>
+                                    <option value="BNB Testnet">BNB Testnet</option>
+                                    <option value="Mumbai Polygon">Mumbai Polygon</option>
+                                    <option value="Goerli Optimism">Goerli Optimism</option>
+                                    <option value="Goerli">Goerli</option>
+                                    <option value="Sepolia">Sepolia</option>
+                                    <option value="Scroll Sepolia">Scroll Sepolia</option>
+                                    <option value="Base Goerli">Base Goerli</option>
+                                    <option value="Chaos SKALE Testnet">Chaos SKALE Testnet</option>
+                                </select>
+                            </div>
+
+                            <button type="button" class="btn btn-primary mb-2" onclick="assembleAndOpenURL()">Open URL in New Tab</button>
+
+                            <div id="result"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Show Example</h5>
+                        
+                        <button type="button" class="btn btn-secondary mb-2" onclick="showExample()">Show Example</button>
+                        <div id="exampleImageContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link ai file JavaScript di Bootstrap e jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Variabile per il dominio personalizzabile
+        var apiUrlBase = "https://evm-api.epicmario71.com";
+
+        function assembleURL() {
+            // Get values from input fields
+            var contractAddress = document.getElementById('contractAddress').value;
+            var chainType = document.getElementById('chainType').value;
+
+            // Map chainType to chainId
+            var chainId;
+            switch (chainType) {
+                case "OpBNB":
+                    chainId = 5611;
+                    break;
+                case "BNB Testnet":
+                    chainId = 97;
+                    break;
+                case "Mumbai Polygon":
+                    chainId = 80001;
+                    break;
+                case "Goerli Optimism":
+                    chainId = 420;
+                    break;
+                case "Goerli":
+                    chainId = 5;
+                    break;
+                case "Sepolia":
+                    chainId = 11155111;
+                    break;
+                case "Scroll Sepolia":
+                    chainId = 534351;
+                    break;
+                case "Base Goerli":
+                    chainId = 84531;
+                    break;
+                case "Chaos SKALE Testnet":
+                    chainId = 1351057110;
+                    break;
+                default:
+                    chainId = 1; // Default chain ID if none matches
+                    break;
+            }
+
+            // Construct the URL
+            return `${apiUrlBase}/v1/?contract_address=${contractAddress}&chainid=${chainId}`;
+        }
+
+        function assembleAndOpenURL() {
+            // Assemble the URL
+            var apiUrl = assembleURL();
+
+            // Display the result
+            document.getElementById('result').innerHTML = `<div class="alert alert-info" role="alert">Assembled URL: <a href="${apiUrl}" target="_blank">${apiUrl}</a></div>`;
+
+            // Open the URL in a new tab
+            window.open(apiUrl, '_blank');
+        }
+
+        function showExample() {
+            // URL dell'esempio (sostituisci con il tuo URL dell'immagine)
+            var exampleImageUrl = "https://evm-api.epicmario71.com/v1/?contract_address=0xE96f894e402315eA87b6852D9546030761815969&chainid=5611";
+
+            // Mostra l'immagine e il link
+            var exampleImageContainer = document.getElementById('exampleImageContainer');
+            exampleImageContainer.innerHTML = `<img src="${exampleImageUrl}" alt="Example Image" id="exampleImage" class="img-fluid">
+                <p><a href="${exampleImageUrl}" target="_blank">Open the image in a new tab</a></p>`;
+        }
+    </script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import json
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template
 from web3 import Web3
 import urllib
 from Crypto.Cipher import AES
@@ -232,5 +232,10 @@ def query_records_password():
 		return response
 	else:
 		return "Memory limit reached"
+	
+@app.route('/', methods=['GET'])
+def main_page():
+	return render_template('main.html')
+
 
 app.run(debug=True, host='0.0.0.0', port=8080, threaded=True)
