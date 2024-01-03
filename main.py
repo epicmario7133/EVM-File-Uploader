@@ -19,7 +19,7 @@ from tkinter import ttk
 from decouple import config
 import argparse
 
-parser = argparse.ArgumentParser(description='BFY Data uploader')
+parser = argparse.ArgumentParser(description='EVM Data uploader')
 parser.add_argument("-t", "--time_out", help="Timeout time with RPC", type=int, default=1200) #20 minuts of time out? Yes maybe no one mine on the pool
 parser.add_argument("-e", "--encoding_type", help="Encoding Type of the file valid options: base64, base64withpassword", type=str, default="base64")
 parser.add_argument("-g", "--gui", help="Enable/Disable gui", type=str, default="True")
@@ -1025,4 +1025,4 @@ if gui == "True":
 else:
     open_file()
     start()
-
+    

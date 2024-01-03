@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EVM Api Home Page</title>
 
-    <!-- Link ai file CSS di Bootstrap -->
+    <!-- Link to Bootstrap CSS file -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -13,7 +13,7 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        #result, #exampleImageContainer {
+        #result, #exampleImageContainer, #searchResult {
             margin-top: 20px;
         }
         #exampleImage {
@@ -35,10 +35,7 @@
         .form-group {
             margin-bottom: 20px;
         }
-        .btn-primary {
-            margin-top: 10px;
-        }
-        .btn-secondary {
+        .btn-primary, .btn-secondary, .btn-info {
             margin-top: 10px;
         }
     </style>
@@ -94,16 +91,60 @@
                 </div>
             </div>
         </div>
+
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Search Contract on Blockchain</h5>
+                        
+                        <div class="form-group">
+                            <label for="contractToSearch" >Enter the contract address you want to search. The blockchain on which the contract was deployed will be automatically detected.</label>
+                            <input type="text" class="form-control" id="contractToSearch" placeholder="Enter contract address to search">
+                            
+                        </div>
+
+                        <button type="button" class="btn btn-info mb-2" onclick="searchContractOnBlockchain()" >Search Contract</button>
+                        <div id="searchResult"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Link ai file JavaScript di Bootstrap e jQuery -->
+    <!-- Link to Bootstrap and jQuery JavaScript files -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        // Variabile per il dominio personalizzabile
+        // Customizable domain variable
         var apiUrlBase = "https://evm-api.epicmario71.com";
+
+        function getChainName(chainId) {
+            switch (chainId) {
+                case 5611:
+                    return "OpBNB";
+                case 97:
+                    return "BNB Testnet";
+                case 80001:
+                    return "Mumbai Polygon";
+                case 420:
+                    return "Goerli Optimism";
+                case 5:
+                    return "Goerli";
+                case 11155111:
+                    return "Sepolia";
+                case 534351:
+                    return "Scroll Sepolia";
+                case 84531:
+                    return "Base Goerli";
+                case 1351057110:
+                    return "Chaos SKALE Testnet";
+                default:
+                    return "Unknown Chain";
+            }
+        }
 
         function assembleURL() {
             // Get values from input fields
@@ -161,13 +202,79 @@
         }
 
         function showExample() {
-            // URL dell'esempio (sostituisci con il tuo URL dell'immagine)
-            var exampleImageUrl = "https://evm-api.epicmario71.com/v1/?contract_address=0xE96f894e402315eA87b6852D9546030761815969&chainid=5611";
+        // Example URL (replace with your own image URL)
+        var exampleImageUrl = "https://evm-api.epicmario71.com/v1/?contract_address=0xE96f894e402315eA87b6852D9546030761815969&chainid=5611";
 
-            // Mostra l'immagine e il link
-            var exampleImageContainer = document.getElementById('exampleImageContainer');
+        // Show the image and link
+        var exampleImageContainer = document.getElementById('exampleImageContainer');
+        var exampleImage = document.getElementById('exampleImage');
+
+        // Check if the image is already present
+        if (exampleImage) {
+            // If present, remove the image
+            exampleImageContainer.removeChild(exampleImage);
+        } else {
+            // If not present, add the image
             exampleImageContainer.innerHTML = `<img src="${exampleImageUrl}" alt="Example Image" id="exampleImage" class="img-fluid">
                 <p><a href="${exampleImageUrl}" target="_blank">Open the image in a new tab</a></p>`;
+        }
+    }
+
+        async function searchContractOnBlockchain() {
+    // Get values from input fields
+    var contractAddress = document.getElementById('contractToSearch').value;
+
+    // Array of chain IDs to test
+    var chainIdsToTest = [5611, 97, 80001, 420, 5, 11155111, 534351, 84531, 1351057110];
+
+    // Variable to indicate if the contract has been found
+    var isContractFound = false;
+
+    // Iterate through the chain IDs and try to search for the contract
+    for (var i = 0; i < chainIdsToTest.length; i++) {
+        var apiUrl = `${apiUrlBase}/json/?contract_address=${contractAddress}&chainid=${chainIdsToTest[i]}`;
+
+        try {
+            // Perform an asynchronous API call using fetch
+            const response = await fetch(apiUrl);
+
+            // Check if the call was successful and handle the response
+            if (response.ok) {
+                // Convert the response to JSON format
+                const data = await response.json();
+
+                // Update the isContractFound variable based on the actual result
+                isContractFound = true;
+            } else {
+                console.error(`API call error: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("An error occurred during the API call:", error);
+        }
+
+        // If the contract has been found, display the result and stop the search
+        if (isContractFound) {
+            var chainName = getChainName(chainIdsToTest[i]);
+            // Display the result with the chain name
+            displaySearchResult(true, contractAddress, chainIdsToTest[i], chainName);
+            break;
+        }
+    }
+
+    // If the contract has not been found on any chain, display an appropriate message
+    if (!isContractFound) {
+        displaySearchResult(false, contractAddress, null);
+    }
+    }
+
+    function displaySearchResult(isFound, contractAddress, chainId, chainName) {
+        var searchResultContainer = document.getElementById('searchResult');
+
+            if (isFound) {
+                searchResultContainer.innerHTML = `<p class="search-result-text">The contract with the address ${contractAddress} has been found on the ${chainName} blockchain (ID ${chainId}).</p>`;
+            } else {
+                searchResultContainer.innerHTML = `<p class="search-result-text">The contract with the address ${contractAddress} has not been found on any of the tested blockchains.</p>`;
+            }
         }
     </script>
 </body>

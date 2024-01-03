@@ -238,4 +238,4 @@ def main_page():
 	return render_template('main.html')
 
 
-app.run(debug=True, host='0.0.0.0', port=8080, threaded=True)
+app.run(host='0.0.0.0', port=8080, threaded=True)
