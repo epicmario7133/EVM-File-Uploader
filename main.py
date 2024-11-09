@@ -26,9 +26,10 @@ parser.add_argument("-g", "--gui", help="Enable/Disable gui", type=str, default=
 parser.add_argument("-i", "--input", help="Patch of the file  to upload (work only with --gui False)", type=str)
 parser.add_argument("-rpc", help="RPC url of Evm compatible chain", type=str, default= "https://opbnb-testnet-rpc.bnbchain.org/")
 parser.add_argument("-p", "--password", help="Password of base64withpassword encoding", type=str, default= "Password")
-parser.add_argument("-gasprice", help="GasPrice for transaction", type=int)
+parser.add_argument("-gasprice", help="GasPrice for transaction in Gwai", type=float)
 parser.add_argument("-chainid", help="ChainID of BlockChain", type=int, default=5611)
 parser.add_argument("-c", "--convalidate", help="Convalidate file after upload False/True", type=str, default="False")
+parser.add_argument("-s", "--saveoutput", help="Save the contract andress after upload False/True", type=str, default="False")
 
 
 args = parser.parse_args()
@@ -38,6 +39,7 @@ gui = args.gui
 filepath = args.input
 passwordbase64 = args.password
 convalidate_enable = args.convalidate
+saveoutput = args.saveoutput
 
 
 
@@ -95,10 +97,14 @@ def connect_web3():
     #print(chainid)
     web3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={'timeout': timeoutblockchain})) 
     if args.gasprice == None:
-        gasprice = web3.eth.gas_price
+
+        if chain.get() == "OpBNB": #set gasprice for OpBNB because gas api give a wrong value
+            gasprice = 5008
+        else:
+            gasprice = web3.eth.gas_price
         print("gas:" + str(web3.from_wei(web3.eth.gas_price, 'gwei')))
     else:
-        gasprice =  web3.toWei(args.gasprice, 'gwei')
+        gasprice =  web3.to_wei(args.gasprice, 'gwei')
         print("gas:" + str(args.gasprice))
     #TODO Re-write this code:
     constfrocontract = 0.0000000000715 * float(gasprice) #is the 0.0000000000715 1 trasaction of 100kb (the max one for 1 block)
@@ -463,6 +469,18 @@ def open_file():
     elif ext == 'docx':
         type_format = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         dataurl = f'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{base64_utf8_str}'
+    elif ext == 'eot':
+        type_format = "data:@file/vnd.ms-fontobject"
+        dataurl = f'data:@file/vnd.ms-fontobject;base64,{base64_utf8_str}'
+    elif ext == 'ttf':
+        type_format = "data:@file/x-font-ttf"
+        dataurl = f'data:@file/x-font-ttf;base64,{base64_utf8_str}'
+    elif ext == 'woff':
+        type_format = "data:@application/x-font-woff"
+        dataurl = f'data:@application/x-font-woff;base64,{base64_utf8_str}'
+    elif ext == 'svg':
+        type_format = "data:@file/svg+xml"
+        dataurl = f'data:@file/svg+xml;base64,{base64_utf8_str}'
     else:
         type_format = ext
         dataurl = base64_utf8_str
@@ -940,6 +958,9 @@ def start():
 
         textbox.delete(0, END)
         textbox.insert(0, Aggregator)
+        if saveoutput == "True":
+            with open('output.txt', 'w') as file:
+                file.write(Aggregator)
 
         
     
@@ -1025,4 +1046,6 @@ if gui == "True":
 else:
     open_file()
     start()
-    
+    if saveoutput == "True":
+        with open('output.txt', 'w') as file:
+            file.write(Aggregator)

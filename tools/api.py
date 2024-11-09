@@ -10,6 +10,8 @@ from Crypto import Random
 import base64
 import argparse
 import sqlite3
+from io import BytesIO
+import sys
 
 def write_db(contract_address, chainid):
 	conn = sqlite3.connect('api_requests.db')
@@ -191,11 +193,38 @@ def query_records_image():
 
 		if contract.functions.Get_Size().call() < memorylimit:
 			result = contract.functions.GetData().call()
-			data_file = urllib.request.urlopen(result)
-			response = send_file(data_file, mimetype=contract.functions.GetFormat().call())
-			response.headers.add('Access-Control-Allow-Origin', '*')
-			if statistic == "True":
-				write_db(contract_address, chainid)
+			if result.startswith("data"):
+				data_file = urllib.request.urlopen(result)
+				print(sys.getsizeof(data_file))
+				print(type(data_file))
+				if result.startswith("data:@file/vnd.ms-fontobject"):
+					response = send_file(data_file, mimetype=contract.functions.GetFormat().call(), download_name="font.eot")
+				elif result.startswith("data:@file/x-font-ttf"):
+					response = send_file(data_file,  mimetype=contract.functions.GetFormat().call(), as_attachment=True, download_name="font.ttf")
+					response.headers.add('content-length', sys.getsizeof(data_file))
+				elif result.startswith("data:@application/x-font-woff"):
+					response = send_file(data_file, mimetype="application/x-font-woff woff", download_name="font.woff")
+					response.headers.add('content-length', sys.getsizeof(data_file))
+				elif result.startswith("data:@file/x-font-woff2"):
+					response = send_file(data_file, mimetype=contract.functions.GetFormat().call(), download_name="font.woff2")
+				elif result.startswith("data:@file/x-font-otf"):	
+					response = send_file(data_file, mimetype=contract.functions.GetFormat().call(), download_name="font.otf")
+				elif result.startswith("data:@file/svg+xml"):
+					response = send_file(data_file, mimetype=contract.functions.GetFormat().call(), download_name="image.svg")
+				else:
+					response = send_file(data_file, mimetype=contract.functions.GetFormat().call())
+					response.headers.add('Access-Control-Allow-Origin', '*')
+
+				if statistic == "True":
+					write_db(contract_address, chainid)		
+			else:
+				decoded_content = base64.b64decode(result)
+				file_buffer = BytesIO(decoded_content)
+				response = send_file(file_buffer, mimetype=contract.functions.GetFormat().call())
+				response.headers.add('Access-Control-Allow-Origin', '*')
+				if statistic == "True":
+					write_db(contract_address, chainid)
+				
 		else:
 			response = "Memory limit reached"
 	else: 

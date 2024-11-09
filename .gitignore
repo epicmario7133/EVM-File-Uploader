@@ -5,3 +5,8 @@ dist/
 api_requests.db
 
 /main.spec
+web-to-upload/
+output.txt
+contracts/aggregator.sol
+contracts/contract.sol
+tools/website-uploader.py
