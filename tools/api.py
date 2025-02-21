@@ -61,9 +61,6 @@ def GetRpcById(id):
 	elif id == "420":
 		rpc = "https://goerli.optimism.io"
 		return rpc
-	elif id == "5":
-		rpc = "https://ethereum-goerli.publicnode.com"
-		return rpc
 	elif id == "11155111":
 		rpc = "https://eth-sepolia.public.blastapi.io"
 		return rpc
@@ -75,6 +72,9 @@ def GetRpcById(id):
 		return rpc
 	elif id == "1351057110":
 		rpc = "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix"
+		return rpc
+	elif id == "17000":
+		rpc = "https://ethereum-holesky-rpc.publicnode.com"
 		return rpc
 	
 

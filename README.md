@@ -10,12 +10,12 @@ EVM File Uploader is a program that allows you to upload files to any EVM compat
 | opBNB    | <span style="color:green">Fully work</span>| The best option|
 | Mumbai Testnet    | <span style="color:yellow">Work</span> | It works but often gives problems <br> with the fees and the transactions<br> take a long time, more tests are needed       |
 | OP Goerli   | <span style="color:yellow">Work</span> | Due to lack of faucets and funds, all <br> the tests have not been carried out, <br> initial tests seem to work
-| Goerli   | <span style="color:green">Fully work</span> | Slow, putting a different and higher <br> gasfee speeds up the process
 | Sepolia   | <span style="color:green">Fully work</span> | Fast and Low fee
 | BitTorrent Donau   | <span style="color:red">Not Working</span> | Gas problem
 | Scroll Sepolia   | <span style="color:green">Fully work</span> | Slow upload but Super Low fee
 | Base Goerli   | <span style="color:green">Fully work</span> | Slow upload but Super Low fee
 | Chaos SKALE Testnet  | <span style="color:yellow">Work</span> | Encountered errors when <br> loading large files over 2mb. Currently<br> investigating. Fast upload and faucet <br> available: [here](https://sfuel.skale.network/staging/chaos)
+| Holesky Testnet  | <span style="color:yellow">work</span> | Nonce errors with files larger than 200kb <br> Slow upload, faucet available: [here](https://cloud.google.com/application/web3/faucet/ethereum/holesky)
 
 
 

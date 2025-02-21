@@ -31,6 +31,13 @@ parser.add_argument("-chainid", help="ChainID of BlockChain", type=int, default=
 parser.add_argument("-c", "--convalidate", help="Convalidate file after upload False/True", type=str, default="False")
 parser.add_argument("-s", "--saveoutput", help="Save the contract andress after upload False/True", type=str, default="False")
 
+if not os.path.exists(".env"):
+    with open(".env", "w") as file:
+        private_key = input("Enter your private key: ")
+        address = input("Enter your address: ")
+        file.write(f"private_key={private_key}\n")
+        file.write(f"address={address}\n")
+        print("File '.env' done!")
 
 args = parser.parse_args()
 encodingtype = args.encoding_type 
@@ -67,10 +74,6 @@ def connect_web3():
         rpc = "https://goerli.optimism.io"
         chainid = 420
         maxspacecut = 25000
-    elif chain.get() == "Goerli":
-        rpc = "https://ethereum-goerli.publicnode.com"
-        chainid = 5
-        maxspacecut = 25000
     elif chain.get() == "Sepolia":
         rpc = "https://eth-sepolia.public.blastapi.io"
         chainid = 11155111
@@ -87,6 +90,10 @@ def connect_web3():
         rpc = "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix"
         chainid = 1351057110
         maxspacecut = 45000
+    elif chain.get() == "Holešky Testnet":
+        rpc = "https://ethereum-holesky-rpc.publicnode.com"
+        chainid = 17000
+        maxspacecut = 25000
     elif 'rpc' not in locals():
         rpc = args.rpc
     if 'chainid' not in globals():
@@ -298,7 +305,7 @@ def UploadToBlockchain():
     tx_create = web3.eth.account.sign_transaction(construct_txn, account_from['private_key'])
 
     # 7. Send tx and wait for receipt
-    tx_hash = web3.eth.send_raw_transaction(tx_create.rawTransaction)
+    tx_hash = web3.eth.send_raw_transaction(tx_create.raw_transaction)
     tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash, timeout=timeoutblockchain)
 
     print(f'Contract deployed at address: { tx_receipt.contractAddress }')
@@ -353,7 +360,7 @@ def UploadAggregator():
     tx_create = web3.eth.account.sign_transaction(construct_txn, account_from['private_key'])
 
     # 7. Send tx and wait for receipt
-    tx_hash = web3.eth.send_raw_transaction(tx_create.rawTransaction)
+    tx_hash = web3.eth.send_raw_transaction(tx_create.raw_transaction)
     tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash, timeout=timeoutblockchain)
 
     print(f'Contract deployed at address: { tx_receipt.contractAddress }')
@@ -386,7 +393,8 @@ monthchoosen['values'] = ('OpBNB',
                         "Sepolia",
                         "Scroll Sepolia",
                         "Base Goerli",
-                        "Chaos SKALE Testnet")
+                        "Chaos SKALE Testnet",
+                        "Holešky Testnet")
 
 monthchoosen.grid(column = 1, row = 0, sticky="e")
 monthchoosen.current()
